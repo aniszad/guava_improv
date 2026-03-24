@@ -40,6 +40,7 @@ import com.google.common.cache.CacheBuilder.NullListener;
 import com.google.common.cache.CacheBuilder.OneWeigher;
 import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 import com.google.common.cache.CacheLoader.UnsupportedLoadingOperationException;
+import com.google.common.cache.LocalCache.LoadingValueReference;
 import com.google.common.collect.AbstractSequentialIterator;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -1676,18 +1677,18 @@ final class LocalCache<K, V> extends AbstractMap<K, V> implements ConcurrentMap<
    * tables, that otherwise encounter collisions for hash codes that do not differ in lower or upper
    * bits.
    *
-   * @param h hash code
+   * @param hashCode hash code
    */
-  static int rehash(int h) {
+  static int rehash(int hashCode) {
     // Spread bits to regularize both segment and index locations,
     // using variant of single-word Wang/Jenkins hash.
     // TODO(kevinb): use Hashing/move this to Hashing?
-    h += (h << 15) ^ 0xffffcd7d;
-    h ^= h >>> 10;
-    h += h << 3;
-    h ^= h >>> 6;
-    h += (h << 2) + (h << 14);
-    return h ^ (h >>> 16);
+    hashCode += (hashCode << 15) ^ 0xffffcd7d;
+    hashCode ^= hashCode >>> 10;
+    hashCode += hashCode << 3;
+    hashCode ^= hashCode >>> 6;
+    hashCode += (hashCode << 2) + (hashCode << 14);
+    return hashCode ^ (hashCode >>> 16);
   }
 
   /**
@@ -3251,8 +3252,7 @@ final class LocalCache<K, V> extends AbstractMap<K, V> implements ConcurrentMap<
         ValueReference<K, V> valueReference,
         RemovalCause cause) {
       enqueueNotification(key, hash, value, valueReference.getWeight(), cause);
-      writeQueue.remove(entry);
-      accessQueue.remove(entry);
+      removeFromEvictionQueues(entry);
 
       if (valueReference.isLoading()) {
         valueReference.notifyNewValue(null);
@@ -3260,6 +3260,11 @@ final class LocalCache<K, V> extends AbstractMap<K, V> implements ConcurrentMap<
       } else {
         return removeEntryFromChain(first, entry);
       }
+    }
+    @GuardedBy("this")
+    private void removeFromEvictionQueues(ReferenceEntry<K, V> entry) {
+      writeQueue.remove(entry);
+      accessQueue.remove(entry);
     }
 
     @GuardedBy("this")
@@ -3343,8 +3348,8 @@ final class LocalCache<K, V> extends AbstractMap<K, V> implements ConcurrentMap<
           if (e.getHash() == hash
               && entryKey != null
               && map.keyEquivalence.equivalent(key, entryKey)) {
-            ValueReference<K, V> v = e.getValueReference();
-            if (v == valueReference) {
+            ValueReference<K, V> existingValueReference = e.getValueReference();
+            if (existingValueReference == valueReference) {
               ++modCount;
               ReferenceEntry<K, V> newFirst =
                   removeValueFromChain(
@@ -3386,8 +3391,8 @@ final class LocalCache<K, V> extends AbstractMap<K, V> implements ConcurrentMap<
           if (e.getHash() == hash
               && entryKey != null
               && map.keyEquivalence.equivalent(key, entryKey)) {
-            ValueReference<K, V> v = e.getValueReference();
-            if (v == valueReference) {
+            ValueReference<K, V> existingValueReference = e.getValueReference();
+            if (existingValueReference == valueReference) {
               if (valueReference.isActive()) {
                 e.setValueReference(valueReference.getOldValue());
               } else {
@@ -4188,8 +4193,8 @@ final class LocalCache<K, V> extends AbstractMap<K, V> implements ConcurrentMap<
         AtomicReferenceArray<ReferenceEntry<K, V>> table = segment.table;
         for (int j = 0; j < table.length(); j++) {
           for (ReferenceEntry<K, V> e = table.get(j); e != null; e = e.getNext()) {
-            V v = segment.getLiveValue(e, now);
-            if (v != null && valueEquivalence.equivalent(value, v)) {
+            V liveValue = segment.getLiveValue(e, now);
+            if (liveValue != null && valueEquivalence.equivalent(value, v)) {
               return true;
             }
           }
