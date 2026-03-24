@@ -67,6 +67,10 @@ final class Murmur3_32HashFunction extends AbstractHashFunction implements Seria
 
   private static final int C1 = 0xcc9e2d51;
   private static final int C2 = 0x1b873593;
+  // Finalization mix constants from the MurmurHash3 specification
+  private static final int FMIX_C1 = 0x85ebca6b;
+  private static final int FMIX_C2 = 0xc2b2ae35;
+  private static final int MIX_H1_ADD = 0xe6546b64;
 
   private final int seed;
   private final boolean supplementaryPlaneFix;
@@ -251,7 +255,7 @@ final class Murmur3_32HashFunction extends AbstractHashFunction implements Seria
   private static int mixH1(int h1, int k1) {
     h1 ^= k1;
     h1 = Integer.rotateLeft(h1, 13);
-    h1 = h1 * 5 + 0xe6546b64;
+    h1 = h1 * 5 + MIX_H1_ADD;
     return h1;
   }
 
@@ -259,9 +263,9 @@ final class Murmur3_32HashFunction extends AbstractHashFunction implements Seria
   private static HashCode fmix(int h1, int length) {
     h1 ^= length;
     h1 ^= h1 >>> 16;
-    h1 *= 0x85ebca6b;
+    h1 *= FMIX_C1;
     h1 ^= h1 >>> 13;
-    h1 *= 0xc2b2ae35;
+    h1 *= FMIX_C2;
     h1 ^= h1 >>> 16;
     return HashCode.fromInt(h1);
   }
