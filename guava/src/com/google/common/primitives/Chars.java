@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.RandomAccess;
 import org.jspecify.annotations.Nullable;
 
@@ -188,6 +189,22 @@ public final class Chars {
       return i;
     }
     return -1;
+  }
+  /**
+   * Returns the index of the first occurrence of {@code target} in {@code array} as an
+   * {@link OptionalInt}, or {@link OptionalInt#empty()} if no such value exists.
+   *
+   * <p>Unlike {@link #indexOf(char[], char)}, the absent case is represented explicitly and cannot
+   * be accidentally ignored by the caller.
+   *
+   * @param array an array of {@code char} values, possibly empty
+   * @param target a primitive {@code char} value
+   * @return an {@link OptionalInt} containing the first index where {@code target} appears in
+   *     {@code array}, or {@link OptionalInt#empty()} if it does not appear
+   */
+  public static OptionalInt indexOfOptional(char[] array, char target) {
+    int index = indexOf(array, target);
+    return index == -1 ? OptionalInt.empty() : OptionalInt.of(index);
   }
 
   /**

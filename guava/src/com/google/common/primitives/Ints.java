@@ -36,6 +36,7 @@ import java.util.RandomAccess;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import org.jspecify.annotations.Nullable;
+import java.util.OptionalInt;
 
 /**
  * Static utility methods pertaining to {@code int} primitives, that are not already found in either
@@ -159,6 +160,7 @@ public final class Ints extends IntsMethodsForWeb {
     return indexOf(array, target, 0, array.length);
   }
 
+  
   // TODO(kevinb): consider making this public
   private static int indexOf(int[] array, int target, int start, int end) {
     for (int i = start; i < end; i++) {
@@ -197,6 +199,23 @@ public final class Ints extends IntsMethodsForWeb {
     }
     return -1;
   }
+
+  /**
+ * Returns the index of the first occurrence of {@code target} in {@code array} as an
+ * {@link OptionalInt}, or {@link OptionalInt#empty()} if no such value exists.
+ *
+ * <p>Unlike {@link #indexOf(int[], int)}, the absent case is represented explicitly and cannot
+ * be accidentally ignored by the caller.
+ *
+ * @param array an array of {@code int} values, possibly empty
+ * @param target a primitive {@code int} value
+ * @return an {@link OptionalInt} containing the first index where {@code target} appears in
+ *     {@code array}, or {@link OptionalInt#empty()} if it does not appear
+ */
+public static OptionalInt indexOfOptional(int[] array, int target) {
+  int index = indexOf(array, target);
+  return index == -1 ? OptionalInt.empty() : OptionalInt.of(index);
+}
 
   /**
    * Returns the index of the last appearance of the value {@code target} in {@code array}.
