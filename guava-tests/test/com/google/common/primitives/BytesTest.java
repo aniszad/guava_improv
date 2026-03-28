@@ -31,6 +31,7 @@ import java.util.List;
 import junit.framework.TestCase;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import java.util.OptionalInt;
 
 /**
  * Unit test for {@link Bytes}.
@@ -109,6 +110,25 @@ public class BytesTest extends TestCase {
                 new byte[] {(byte) 2, (byte) 3, (byte) 4}))
         .isEqualTo(-1);
   }
+
+  public void testIndexOfOptional() {
+      assertThat(Bytes.indexOfOptional(EMPTY, (byte) 1)).isEqualTo(OptionalInt.empty());
+      assertThat(Bytes.indexOfOptional(ARRAY1, (byte) 2)).isEqualTo(OptionalInt.empty());
+      assertThat(Bytes.indexOfOptional(ARRAY234, (byte) 1)).isEqualTo(OptionalInt.empty());
+      assertThat(Bytes.indexOfOptional(new byte[] {(byte) -1}, (byte) -1)).isEqualTo(OptionalInt.of(0));
+      assertThat(Bytes.indexOfOptional(ARRAY234, (byte) 2)).isEqualTo(OptionalInt.of(0));
+      assertThat(Bytes.indexOfOptional(ARRAY234, (byte) 3)).isEqualTo(OptionalInt.of(1));
+      assertThat(Bytes.indexOfOptional(ARRAY234, (byte) 4)).isEqualTo(OptionalInt.of(2));
+      assertThat(Bytes.indexOfOptional(new byte[] {(byte) 2, (byte) 3, (byte) 2, (byte) 3}, (byte) 3))
+          .isEqualTo(OptionalInt.of(1));
+    }
+  
+    public void testIndexOfOptional_consistentWithIndexOf() {
+      for (byte target : VALUES) {
+        assertThat(Bytes.indexOfOptional(ARRAY234, target).isPresent())
+            .isEqualTo(Bytes.indexOf(ARRAY234, target) != -1);
+      }
+    }
 
   public void testLastIndexOf() {
     assertThat(Bytes.lastIndexOf(EMPTY, (byte) 1)).isEqualTo(-1);

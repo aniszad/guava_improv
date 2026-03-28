@@ -37,6 +37,7 @@ import java.util.Locale;
 import junit.framework.TestCase;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import java.util.OptionalInt;
 
 /**
  * Unit test for {@link Chars}.
@@ -161,6 +162,24 @@ public class CharsTest extends TestCase {
                 new char[] {(char) 2, (char) 3, (char) 4}))
         .isEqualTo(-1);
   }
+  public void testIndexOfOptional() {
+      assertThat(Chars.indexOfOptional(EMPTY, (char) 1)).isEqualTo(OptionalInt.empty());
+      assertThat(Chars.indexOfOptional(ARRAY1, (char) 2)).isEqualTo(OptionalInt.empty());
+      assertThat(Chars.indexOfOptional(ARRAY234, (char) 1)).isEqualTo(OptionalInt.empty());
+      assertThat(Chars.indexOfOptional(new char[] {(char) -1}, (char) -1)).isEqualTo(OptionalInt.of(0));
+      assertThat(Chars.indexOfOptional(ARRAY234, (char) 2)).isEqualTo(OptionalInt.of(0));
+      assertThat(Chars.indexOfOptional(ARRAY234, (char) 3)).isEqualTo(OptionalInt.of(1));
+      assertThat(Chars.indexOfOptional(ARRAY234, (char) 4)).isEqualTo(OptionalInt.of(2));
+      assertThat(Chars.indexOfOptional(new char[] {(char) 2, (char) 3, (char) 2, (char) 3}, (char) 3))
+          .isEqualTo(OptionalInt.of(1));
+    }
+  
+    public void testIndexOfOptional_consistentWithIndexOf() {
+      for (char target : VALUES) {
+        assertThat(Chars.indexOfOptional(ARRAY234, target).isPresent())
+            .isEqualTo(Chars.indexOf(ARRAY234, target) != -1);
+      }
+    }
 
   public void testLastIndexOf() {
     assertThat(Chars.lastIndexOf(EMPTY, (char) 1)).isEqualTo(-1);

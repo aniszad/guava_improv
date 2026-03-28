@@ -38,6 +38,7 @@ import java.util.Random;
 import junit.framework.TestCase;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import java.util.OptionalInt;
 
 /**
  * Unit test for {@link Ints}.
@@ -158,6 +159,24 @@ public class IntsTest extends TestCase {
             Ints.indexOf(
                 new int[] {(int) 4, (int) 3, (int) 2}, new int[] {(int) 2, (int) 3, (int) 4}))
         .isEqualTo(-1);
+  }
+  public void testIndexOfOptional() {
+    assertThat(Ints.indexOfOptional(EMPTY, (int) 1)).isEqualTo(OptionalInt.empty());
+    assertThat(Ints.indexOfOptional(ARRAY1, (int) 2)).isEqualTo(OptionalInt.empty());
+    assertThat(Ints.indexOfOptional(ARRAY234, (int) 1)).isEqualTo(OptionalInt.empty());
+    assertThat(Ints.indexOfOptional(new int[] {(int) -1}, (int) -1)).isEqualTo(OptionalInt.of(0));
+    assertThat(Ints.indexOfOptional(ARRAY234, (int) 2)).isEqualTo(OptionalInt.of(0));
+    assertThat(Ints.indexOfOptional(ARRAY234, (int) 3)).isEqualTo(OptionalInt.of(1));
+    assertThat(Ints.indexOfOptional(ARRAY234, (int) 4)).isEqualTo(OptionalInt.of(2));
+    assertThat(Ints.indexOfOptional(new int[] {(int) 2, (int) 3, (int) 2, (int) 3}, (int) 3))
+        .isEqualTo(OptionalInt.of(1));
+  }
+
+  public void testIndexOfOptional_consistentWithIndexOf() {
+    for (int target : VALUES) {
+      assertThat(Ints.indexOfOptional(ARRAY234, target).isPresent())
+          .isEqualTo(Ints.indexOf(ARRAY234, target) != -1);
+    }
   }
 
   public void testLastIndexOf() {
