@@ -241,6 +241,25 @@ public static OptionalInt indexOfOptional(int[] array, int target) {
     return -1;
   }
 
+  
+    /**
+   * Returns the index of the last occurrence of {@code target} in {@code array} as an
+   * {@link OptionalInt}, or {@link OptionalInt#empty()} if no such value exists.
+   *
+   * <p>Unlike {@link #lastIndexOf(int[], int)}, the absent case is represented explicitly
+   * and cannot be accidentally ignored by the caller.
+   *
+   * @param array an array of {@code int} values, possibly empty
+   * @param target a primitive {@code int} value
+   * @return an {@link OptionalInt} containing the last index where {@code target} appears in
+   *     {@code array}, or {@link OptionalInt#empty()} if it does not appear
+   * @since 33.4.0
+   */
+  public static OptionalInt lastIndexOfOptional(int[] array, int target) {
+    checkNotNull(array, "array");
+    int index = lastIndexOf(array, target);
+    return index == -1 ? OptionalInt.empty() : OptionalInt.of(index);
+  }
   /**
    * Returns the least value present in {@code array}.
    *
