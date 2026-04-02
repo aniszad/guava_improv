@@ -213,6 +213,7 @@ public final class Ints extends IntsMethodsForWeb {
  *     {@code array}, or {@link OptionalInt#empty()} if it does not appear
  */
 public static OptionalInt indexOfOptional(int[] array, int target) {
+  checkNotNull(array, "array");
   int index = indexOf(array, target);
   return index == -1 ? OptionalInt.empty() : OptionalInt.of(index);
 }
