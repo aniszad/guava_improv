@@ -211,6 +211,7 @@ public final class Ints extends IntsMethodsForWeb {
  * @param target a primitive {@code int} value
  * @return an {@link OptionalInt} containing the first index where {@code target} appears in
  *     {@code array}, or {@link OptionalInt#empty()} if it does not appear
+ * @since 33.4.0
  */
 public static OptionalInt indexOfOptional(int[] array, int target) {
   checkNotNull(array, "array");
