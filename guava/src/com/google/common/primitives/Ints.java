@@ -140,12 +140,7 @@ public final class Ints extends IntsMethodsForWeb {
    * @return {@code true} if {@code array[i] == target} for some value of {@code i}
    */
   public static boolean contains(int[] array, int target) {
-    for (int value : array) {
-      if (value == target) {
-        return true;
-      }
-    }
-    return false;
+    return AbstractPrimitiveUtilities.contains(array, target);
   }
 
   /**
@@ -163,12 +158,7 @@ public final class Ints extends IntsMethodsForWeb {
   
   // TODO(kevinb): consider making this public
   private static int indexOf(int[] array, int target, int start, int end) {
-    for (int i = start; i < end; i++) {
-      if (array[i] == target) {
-        return i;
-      }
-    }
-    return -1;
+    return AbstractPrimitiveUtilities.linearSearchRange(array, target, start, end);
   }
 
   /**
@@ -182,22 +172,7 @@ public final class Ints extends IntsMethodsForWeb {
    * @param target the array to search for as a sub-sequence of {@code array}
    */
   public static int indexOf(int[] array, int[] target) {
-    checkNotNull(array, "array");
-    checkNotNull(target, "target");
-    if (target.length == 0) {
-      return 0;
-    }
-
-    outer:
-    for (int i = 0; i < array.length - target.length + 1; i++) {
-      for (int j = 0; j < target.length; j++) {
-        if (array[i + j] != target[j]) {
-          continue outer;
-        }
-      }
-      return i;
-    }
-    return -1;
+    return AbstractPrimitiveUtilities.linearSearchSubArray(array, target);
   }
 
   /**
@@ -233,12 +208,7 @@ public static OptionalInt indexOfOptional(int[] array, int target) {
 
   // TODO(kevinb): consider making this public
   private static int lastIndexOf(int[] array, int target, int start, int end) {
-    for (int i = end - 1; i >= start; i--) {
-      if (array[i] == target) {
-        return i;
-      }
-    }
-    return -1;
+    return AbstractPrimitiveUtilities.linearSearchLastIndexRange(array, target, start, end);
   }
 
   
