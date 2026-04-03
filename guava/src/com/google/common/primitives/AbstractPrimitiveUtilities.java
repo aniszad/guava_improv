@@ -446,4 +446,141 @@ abstract class AbstractPrimitiveUtilities {
     }
     return false;
   }
+
+  // ============ LONG ARRAY SEARCH METHODS ============
+
+  /**
+   * Searches for the first occurrence of a value in a long array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @param length the effective length of the array to search
+   * @return the index of the first occurrence, or -1 if not found
+   */
+  protected static int linearSearch(long[] array, long target, int length) {
+    checkNotNull(array, "array");
+    return linearSearchRange(array, target, 0, length);
+  }
+
+  /**
+   * Searches for the first occurrence of a value in a range of a long array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @param start the starting index (inclusive)
+   * @param end the ending index (exclusive)
+   * @return the index of the first occurrence, or -1 if not found
+   */
+  protected static int linearSearchRange(long[] array, long target, int start, int end) {
+    for (int i = start; i < end; i++) {
+      if (array[i] == target) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Searches for the last occurrence of a value in a long array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @param start the starting index (inclusive)
+   * @param end the ending index (exclusive)
+   * @return the index of the last occurrence, or -1 if not found
+   */
+  protected static int linearSearchLastIndexRange(long[] array, long target, int start, int end) {
+    for (int i = end - 1; i >= start; i--) {
+      if (array[i] == target) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Searches for the first occurrence of a value in a long array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @return true if the value is found, false otherwise
+   */
+  protected static boolean contains(long[] array, long target) {
+    checkNotNull(array, "array");
+    for (long value : array) {
+      if (value == target) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // ============ DOUBLE ARRAY SEARCH METHODS ============
+
+  /**
+   * Searches for the first occurrence of a value in a double array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @param length the effective length of the array to search
+   * @return the index of the first occurrence, or -1 if not found
+   */
+  protected static int linearSearch(double[] array, double target, int length) {
+    checkNotNull(array, "array");
+    return linearSearchRange(array, target, 0, length);
+  }
+
+  /**
+   * Searches for the first occurrence of a value in a range of a double array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @param start the starting index (inclusive)
+   * @param end the ending index (exclusive)
+   * @return the index of the first occurrence, or -1 if not found
+   */
+  protected static int linearSearchRange(double[] array, double target, int start, int end) {
+    for (int i = start; i < end; i++) {
+      if (Double.doubleToRawLongBits(array[i]) == Double.doubleToRawLongBits(target)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Searches for the last occurrence of a value in a range of a double array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @param start the starting index (inclusive)
+   * @param end the ending index (exclusive)
+   * @return the index of the last occurrence, or -1 if not found
+   */
+  protected static int linearSearchLastIndexRange(double[] array, double target, int start, int end) {
+    for (int i = end - 1; i >= start; i--) {
+      if (Double.doubleToRawLongBits(array[i]) == Double.doubleToRawLongBits(target)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Searches for the first occurrence of a value in a double array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @return true if the value is found, false otherwise
+   */
+  protected static boolean contains(double[] array, double target) {
+    checkNotNull(array, "array");
+    long targetBits = Double.doubleToRawLongBits(target);
+    for (double value : array) {
+      if (Double.doubleToRawLongBits(value) == targetBits) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

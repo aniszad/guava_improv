@@ -100,12 +100,7 @@ public final class Longs {
    * @return {@code true} if {@code array[i] == target} for some value of {@code i}
    */
   public static boolean contains(long[] array, long target) {
-    for (long value : array) {
-      if (value == target) {
-        return true;
-      }
-    }
-    return false;
+    return AbstractPrimitiveUtilities.contains(array, target);
   }
 
   /**
@@ -122,12 +117,7 @@ public final class Longs {
 
   // TODO(kevinb): consider making this public
   private static int indexOf(long[] array, long target, int start, int end) {
-    for (int i = start; i < end; i++) {
-      if (array[i] == target) {
-        return i;
-      }
-    }
-    return -1;
+    return AbstractPrimitiveUtilities.linearSearchRange(array, target, start, end);
   }
 
   /**
@@ -173,12 +163,7 @@ public final class Longs {
 
   // TODO(kevinb): consider making this public
   private static int lastIndexOf(long[] array, long target, int start, int end) {
-    for (int i = end - 1; i >= start; i--) {
-      if (array[i] == target) {
-        return i;
-      }
-    }
-    return -1;
+    return AbstractPrimitiveUtilities.linearSearchLastIndexRange(array, target, start, end);
   }
 
   /**
