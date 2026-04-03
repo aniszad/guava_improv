@@ -179,6 +179,25 @@ public class IntsTest extends TestCase {
     }
   }
 
+  public void testLastIndexOfOptional() {
+  assertThat(Ints.lastIndexOfOptional(EMPTY, (int) 1)).isEqualTo(OptionalInt.empty());
+  assertThat(Ints.lastIndexOfOptional(ARRAY1, (int) 2)).isEqualTo(OptionalInt.empty());
+  assertThat(Ints.lastIndexOfOptional(ARRAY234, (int) 1)).isEqualTo(OptionalInt.empty());
+  assertThat(Ints.lastIndexOfOptional(new int[] {(int) -1}, (int) -1)).isEqualTo(OptionalInt.of(0));
+  assertThat(Ints.lastIndexOfOptional(ARRAY234, (int) 2)).isEqualTo(OptionalInt.of(0));
+  assertThat(Ints.lastIndexOfOptional(ARRAY234, (int) 3)).isEqualTo(OptionalInt.of(1));
+  assertThat(Ints.lastIndexOfOptional(ARRAY234, (int) 4)).isEqualTo(OptionalInt.of(2));
+  assertThat(Ints.lastIndexOfOptional(new int[] {(int) 2, (int) 3, (int) 2, (int) 3}, (int) 3))
+      .isEqualTo(OptionalInt.of(3));
+}
+
+public void testLastIndexOfOptional_consistentWithLastIndexOf() {
+  for (int target : VALUES) {
+    assertThat(Ints.lastIndexOfOptional(ARRAY234, target).isPresent())
+        .isEqualTo(Ints.lastIndexOf(ARRAY234, target) != -1);
+  }
+}
+
   public void testLastIndexOf() {
     assertThat(Ints.lastIndexOf(EMPTY, (int) 1)).isEqualTo(-1);
     assertThat(Ints.lastIndexOf(ARRAY1, (int) 2)).isEqualTo(-1);
