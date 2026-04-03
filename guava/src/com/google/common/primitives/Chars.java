@@ -132,12 +132,7 @@ public final class Chars {
    * @return {@code true} if {@code array[i] == target} for some value of {@code i}
    */
   public static boolean contains(char[] array, char target) {
-    for (char value : array) {
-      if (value == target) {
-        return true;
-      }
-    }
-    return false;
+    return AbstractPrimitiveUtilities.contains(array, target);
   }
 
   /**
@@ -154,12 +149,7 @@ public final class Chars {
 
   // TODO(kevinb): consider making this public
   private static int indexOf(char[] array, char target, int start, int end) {
-    for (int i = start; i < end; i++) {
-      if (array[i] == target) {
-        return i;
-      }
-    }
-    return -1;
+    return AbstractPrimitiveUtilities.linearSearchRange(array, target, start, end);
   }
 
   /**
@@ -173,22 +163,7 @@ public final class Chars {
    * @param target the array to search for as a sub-sequence of {@code array}
    */
   public static int indexOf(char[] array, char[] target) {
-    checkNotNull(array, "array");
-    checkNotNull(target, "target");
-    if (target.length == 0) {
-      return 0;
-    }
-
-    outer:
-    for (int i = 0; i < array.length - target.length + 1; i++) {
-      for (int j = 0; j < target.length; j++) {
-        if (array[i + j] != target[j]) {
-          continue outer;
-        }
-      }
-      return i;
-    }
-    return -1;
+    return AbstractPrimitiveUtilities.linearSearchSubArray(array, target);
   }
   /**
    * Returns the index of the first occurrence of {@code target} in {@code array} as an
@@ -221,12 +196,7 @@ public final class Chars {
 
   // TODO(kevinb): consider making this public
   private static int lastIndexOf(char[] array, char target, int start, int end) {
-    for (int i = end - 1; i >= start; i--) {
-      if (array[i] == target) {
-        return i;
-      }
-    }
-    return -1;
+    return AbstractPrimitiveUtilities.linearSearchLastIndexRange(array, target, start, end);
   }
 
   /**
