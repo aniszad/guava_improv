@@ -174,4 +174,140 @@ abstract class AbstractPrimitiveUtilities {
     }
     return false;
   }
+
+  // ============ BYTE ARRAY SEARCH METHODS ============
+  // Same patterns as int[], reused for byte[] primitive arrays
+
+  /**
+   * Searches for the first occurrence of a value in a byte array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @param length the effective length of the array to search
+   * @return the index of the first occurrence, or -1 if not found
+   */
+  protected static int linearSearch(byte[] array, byte target, int length) {
+    checkNotNull(array, "array");
+    return linearSearchRange(array, target, 0, length);
+  }
+
+  /**
+   * Searches for the first occurrence of a value in a range of a byte array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @param start the starting index (inclusive)
+   * @param end the ending index (exclusive)
+   * @return the index of the first occurrence, or -1 if not found
+   */
+  protected static int linearSearchRange(byte[] array, byte target, int start, int end) {
+    for (int i = start; i < end; i++) {
+      if (array[i] == target) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Searches for the last occurrence of a value in a byte array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @param length the effective length of the array to search
+   * @return the index of the last occurrence, or -1 if not found
+   */
+  protected static int linearSearchLastIndex(byte[] array, byte target, int length) {
+    checkNotNull(array, "array");
+    return linearSearchLastIndexRange(array, target, 0, length);
+  }
+
+  /**
+   * Searches for the last occurrence of a value in a range of a byte array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @param start the starting index (inclusive)
+   * @param end the ending index (exclusive)
+   * @return the index of the last occurrence, or -1 if not found
+   */
+  protected static int linearSearchLastIndexRange(byte[] array, byte target, int start, int end) {
+    for (int i = end - 1; i >= start; i--) {
+      if (array[i] == target) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Searches for the first occurrence of a sub-array in a byte array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the sub-array to search for (not null)
+   * @return the index of the first occurrence, or -1 if not found
+   */
+  protected static int linearSearchSubArray(byte[] array, byte[] target) {
+    checkNotNull(array, "array");
+    checkNotNull(target, "target");
+    
+    if (target.length == 0) {
+      return 0;
+    }
+
+    outer:
+    for (int i = 0; i < array.length - target.length + 1; i++) {
+      for (int j = 0; j < target.length; j++) {
+        if (array[i + j] != target[j]) {
+          continue outer;
+        }
+      }
+      return i;
+    }
+    return -1;
+  }
+
+  /**
+   * Searches for the last occurrence of a sub-array in a byte array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the sub-array to search for (not null)
+   * @return the index of the last occurrence, or -1 if not found
+   */
+  protected static int linearSearchLastSubArray(byte[] array, byte[] target) {
+    checkNotNull(array, "array");
+    checkNotNull(target, "target");
+    
+    if (target.length == 0) {
+      return array.length;
+    }
+
+    outer:
+    for (int i = array.length - target.length; i >= 0; i--) {
+      for (int j = 0; j < target.length; j++) {
+        if (array[i + j] != target[j]) {
+          continue outer;
+        }
+      }
+      return i;
+    }
+    return -1;
+  }
+
+  /**
+   * Searches for the first occurrence of a value in a byte array.
+   *
+   * @param array the array to search in (not null)
+   * @param target the value to search for
+   * @return true if the value is found, false otherwise
+   */
+  protected static boolean contains(byte[] array, byte target) {
+    checkNotNull(array, "array");
+    for (byte value : array) {
+      if (value == target) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
