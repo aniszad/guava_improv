@@ -16,13 +16,15 @@ package com.google.common.net;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.escape.Escaper;
+import com.google.common.escape.HtmlEscapers;
+import com.google.common.escape.XmlEscapers;
 
 /**
  * {@code Escaper} instances suitable for strings to be included in particular sections of URLs.
  *
  * <p>If the resulting URLs are inserted into an HTML or XML document, they will require additional
- * escaping with {@link com.google.common.html.HtmlEscapers} or {@link
- * com.google.common.xml.XmlEscapers}.
+ * escaping with {@link HtmlEscapers} or {@link
+ * XmlEscapers}.
  *
  * @author David Beaumont
  * @author Chris Povirk

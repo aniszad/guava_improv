@@ -12,11 +12,9 @@
  * the License.
  */
 
-package com.google.common.html;
+package com.google.common.escape;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.escape.Escaper;
-import com.google.common.escape.Escapers;
 
 /**
  * {@code Escaper} instances suitable for strings to be included in HTML attribute values and

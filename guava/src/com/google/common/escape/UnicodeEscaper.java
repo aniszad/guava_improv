@@ -44,7 +44,7 @@ import org.jspecify.annotations.Nullable;
  * by multiple threads.
  *
  * <p>Popular escapers are defined as constants in classes like {@link
- * com.google.common.html.HtmlEscapers} and {@link com.google.common.xml.XmlEscapers}. To create
+ * HtmlEscapers} and {@link XmlEscapers}. To create
  * your own escapers extend this class and implement the {@link #escape(int)} method.
  *
  * @author David Beaumont

@@ -47,7 +47,7 @@ import com.google.errorprone.annotations.DoNotMock;
  * using either of these classes, please contact the Java libraries team for advice.
  *
  * <p>Popular escapers are defined as constants in classes like {@link
- * com.google.common.html.HtmlEscapers} and {@link com.google.common.xml.XmlEscapers}. To create
+ * HtmlEscapers} and {@link XmlEscapers}. To create
  * your own escapers, use {@link CharEscaperBuilder}, or extend {@code CharEscaper} or {@code
  * UnicodeEscaper}.
  *
