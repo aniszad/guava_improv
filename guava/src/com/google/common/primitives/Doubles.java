@@ -112,12 +112,7 @@ public final class Doubles extends DoublesMethodsForWeb {
    * @return {@code true} if {@code array[i] == target} for some value of {@code i}
    */
   public static boolean contains(double[] array, double target) {
-    for (double value : array) {
-      if (value == target) {
-        return true;
-      }
-    }
-    return false;
+    return AbstractPrimitiveUtilities.contains(array, target);
   }
 
   /**
@@ -135,12 +130,7 @@ public final class Doubles extends DoublesMethodsForWeb {
 
   // TODO(kevinb): consider making this public
   private static int indexOf(double[] array, double target, int start, int end) {
-    for (int i = start; i < end; i++) {
-      if (array[i] == target) {
-        return i;
-      }
-    }
-    return -1;
+    return AbstractPrimitiveUtilities.linearSearchRange(array, target, start, end);
   }
 
   /**
