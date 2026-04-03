@@ -280,6 +280,23 @@ public static OptionalInt indexOfOptional(int[] array, int target) {
     }
     return min;
   }
+  /**
+   * Returns the least value present in {@code array} as an {@link OptionalInt}, or
+   * {@link OptionalInt#empty()} if the array is empty.
+   *
+   * <p>Unlike {@link #min(int...)}, this method does not throw an
+   * {@link IllegalArgumentException} when the array is empty.
+   *
+   * @param array an array of {@code int} values, possibly empty
+   * @return an {@link OptionalInt} containing the least value, or empty if the array is empty
+   * @since 33.4.0
+   */
+  public static OptionalInt minOptional(int... array) {
+    if (array.length == 0) {
+      return OptionalInt.empty();
+    }
+    return OptionalInt.of(min(array));
+  }
 
   /**
    * Returns the greatest value present in {@code array}.
@@ -300,6 +317,24 @@ public static OptionalInt indexOfOptional(int[] array, int target) {
       }
     }
     return max;
+  }
+
+  /**
+   * Returns the greatest value present in {@code array} as an {@link OptionalInt}, or
+   * {@link OptionalInt#empty()} if the array is empty.
+   *
+   * <p>Unlike {@link #max(int...)}, this method does not throw an
+   * {@link IllegalArgumentException} when the array is empty.
+   *
+   * @param array an array of {@code int} values, possibly empty
+   * @return an {@link OptionalInt} containing the greatest value, or empty if the array is empty
+   * @since 33.4.0
+   */
+  public static OptionalInt maxOptional(int... array) {
+    if (array.length == 0) {
+      return OptionalInt.empty();
+    }
+    return OptionalInt.of(max(array));
   }
 
   /**
