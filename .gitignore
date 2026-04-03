@@ -11,6 +11,10 @@ out/
 *.iws
 *.iml
 
+index.html
+scripts/
+styles/
+
 # Eclipse
 .classpath
 .project
