@@ -26,6 +26,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import com.google.common.testing.ClassSanityTester;
 import com.google.common.util.concurrent.FuturesTest.ExecutorSpy;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -264,6 +265,39 @@ public class JdkFutureAdaptersTest extends TestCase {
     RecordingRunnable lateListener = new RecordingRunnable();
     listenable.addListener(lateListener, directExecutor());
     assertTrue(lateListener.wasRun.await(1, SECONDS));
+  }
+
+  public void testToCompletableFutureSuccessful() throws Exception {
+    ListenableFuture<String> listenableFuture = immediateFuture("success");
+    CompletableFuture<String> completableFuture =
+        JdkFutureAdapters.toCompletableFuture(listenableFuture, directExecutor());
+
+    assertTrue(completableFuture.isDone());
+    assertEquals("success", completableFuture.get());
+  }
+
+  public void testToCompletableFutureFailure() throws Exception {
+    Exception exception = new RuntimeException("test exception");
+    ListenableFuture<String> listenableFuture = Futures.immediateFailedFuture(exception);
+    CompletableFuture<String> completableFuture =
+        JdkFutureAdapters.toCompletableFuture(listenableFuture, directExecutor());
+
+    assertTrue(completableFuture.isDone());
+    assertTrue(completableFuture.isCompletedExceptionally());
+    try {
+      completableFuture.get();
+      fail("Expected ExecutionException");
+    } catch (java.util.concurrent.ExecutionException e) {
+      assertSame(exception, e.getCause());
+    }
+  }
+
+  public void testFromCompletableFutureSuccessful() throws Exception {
+    CompletableFuture<String> completableFuture = CompletableFuture.completedFuture("success");
+    ListenableFuture<String> listenableFuture = JdkFutureAdapters.fromCompletableFuture(completableFuture);
+
+    assertTrue(listenableFuture.isDone());
+    assertEquals("success", listenableFuture.get());
   }
 
   public void testAdapters_nullChecks() throws Exception {

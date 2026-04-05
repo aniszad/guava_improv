@@ -20,6 +20,7 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.J2ktIncompatible;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
@@ -31,8 +32,9 @@ import org.jspecify.annotations.Nullable;
  * that, whenever possible, it is strongly preferred to modify those libraries to return {@code
  * ListenableFuture} directly.
  *
- * <p>For interoperability between {@code ListenableFuture} and <b>{@code CompletableFuture}</b>,
- * consider <a href="https://github.com/lukas-krecan/future-converter">Future Converter</a>.
+ * <p>This class also provides conversion utilities between {@code ListenableFuture} and {@code
+ * CompletableFuture}: see {@link #toCompletableFuture(ListenableFuture, Executor)} and {@link
+ * #fromCompletableFuture(CompletableFuture)}.
  *
  * @author Sven Mawson
  * @since 10.0 (replacing {@code Futures.makeListenable}, which existed in 1.0)
@@ -169,6 +171,77 @@ public final class JdkFutureAdapters {
             });
       }
     }
+  }
+
+  /**
+   * Converts a {@code ListenableFuture} to a {@code CompletableFuture}.
+   *
+   * <p>The returned {@code CompletableFuture} is completed with the value of the input
+   * {@code ListenableFuture} when it completes successfully. If the input future fails, the
+   * returned future is completed exceptionally with the same exception.
+   *
+   * @param listenableFuture the {@code ListenableFuture} to convert
+   * @param executor the {@code Executor} on which to invoke the callback when the input future
+   *     completes
+   * @return a {@code CompletableFuture} that will be completed with the value or exception of the
+   *     input {@code ListenableFuture}
+   * @since 33.0
+   */
+  public static <V extends @Nullable Object> CompletableFuture<V> toCompletableFuture(
+      ListenableFuture<V> listenableFuture, Executor executor) {
+    checkNotNull(listenableFuture);
+    checkNotNull(executor);
+
+    CompletableFuture<V> completableFuture = new CompletableFuture<>();
+    Futures.addCallback(
+        listenableFuture,
+        new FutureCallback<V>() {
+          @Override
+          public void onSuccess(@Nullable V result) {
+            completableFuture.complete(result);
+          }
+
+          @Override
+          public void onFailure(Throwable t) {
+            completableFuture.completeExceptionally(t);
+          }
+        },
+        executor);
+    return completableFuture;
+  }
+
+  /**
+   * Converts a {@code CompletableFuture} to a {@code ListenableFuture}.
+   *
+   * <p>The returned {@code ListenableFuture} is completed with the value of the input
+   * {@code CompletableFuture} when it completes successfully. If the input future fails, the
+   * returned future is completed exceptionally with the same exception.
+   *
+   * <p><b>Threading:</b> The completion callback runs in the {@code CompletableFuture}'s
+   * completion thread. If callers require control over the executor where the {@code
+   * ListenableFuture} completion runs, consider using {@code whenCompleteAsync()} on the input
+   * future before conversion, or use {@link #toCompletableFuture(ListenableFuture, Executor)} in
+   * the reverse direction for executor-aware completion.
+   *
+   * @param completableFuture the {@code CompletableFuture} to convert
+   * @return a {@code ListenableFuture} that will be completed with the value or exception of the
+   *     input {@code CompletableFuture}
+   * @since 33.0
+   */
+  public static <V extends @Nullable Object> ListenableFuture<V> fromCompletableFuture(
+      CompletableFuture<V> completableFuture) {
+    checkNotNull(completableFuture);
+
+    SettableFuture<V> settableFuture = SettableFuture.create();
+    completableFuture.whenComplete(
+        (value, exception) -> {
+          if (exception != null) {
+            settableFuture.setException(exception);
+          } else {
+            settableFuture.set(value);
+          }
+        });
+    return settableFuture;
   }
 
   private JdkFutureAdapters() {}
